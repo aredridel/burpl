@@ -20,5 +20,27 @@
   "bugs": {
     "url": "https://github.com/aredridel/burpl/issues"
   },
-  "homepage": "https://github.com/aredridel/burpl#readme"
+  "homepage": "https://github.com/aredridel/burpl#readme",
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 8
+    },
+    "rules": {
+      "valid-typeof": "error",
+      "no-unused-vars": "error",
+      "no-undef": "error"
+    },
+    "env": {
+      "es6": true,
+      "browser": true,
+      "node": true
+    }
+  },
+  "dependencies": {
+    "multiplex-rpc": "^1.0.1",
+    "pump": "^1.0.3",
+    "rpcjs": "^1.1.0",
+    "unix-listen": "^0.1.1",
+    "yargs": "^10.0.3"
+  }
 }
