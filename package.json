@@ -1,0 +1,24 @@
+{
+  "name": "burpl",
+  "version": "1.0.0",
+  "description": "Control your daemons with tab-completable repls",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aredridel/burpl.git"
+  },
+  "keywords": [
+    "repl",
+    "cli",
+    "executive"
+  ],
+  "author": "Aria Stewart <aredridel@dinhe.net>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aredridel/burpl/issues"
+  },
+  "homepage": "https://github.com/aredridel/burpl#readme"
+}
