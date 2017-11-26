@@ -37,6 +37,7 @@
     }
   },
   "dependencies": {
+    "common-prefix": "^1.1.0",
     "multiplex-rpc": "^1.0.1",
     "pump": "^1.0.3",
     "rpcjs": "^1.1.0",
