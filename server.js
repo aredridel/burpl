@@ -2,14 +2,14 @@ const { createServer } = require('net')
 const { promisify, callbackify } = require('util')
 const listen = promisify(require('unix-listen'))
 const rpcs = require('multiplex-rpc')
-const pump = promisify(require('pump'))
 
 const server = createServer(async conn => {
     const rpc = rpcs({
         list: callbackify(async () => {
             return [
                 "user list",
-                "user add USER"
+                "user add USER",
+                "user add USER test"
             ]
         }),
         command: callbackify(async (name, args) => {

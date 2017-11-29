@@ -2,7 +2,7 @@ const { promisify } = require('util')
 const connect = require('net').connect
 const rpcs = require('multiplex-rpc')
 const pump = promisify(require('pump'))
-const readline = require('readline')
+const readline = require('readline-ext')
 const commonPrefix = require('common-prefix')
 
 const args = require('yargs')
@@ -27,7 +27,7 @@ async function main(args) {
 			try {
 				const completions = await list(line)
 				const trie = compl2trie(completions)
-				const words = line.split(/\s+/)
+				const words = line.split(/\b/)
 
 				let n = trie
 				const prefix = []
@@ -36,36 +36,37 @@ async function main(args) {
 				// if the word is ambiguous and we're at the end, expand as much as we can, else stop
 				for (var i = 0; i < words.length; i++) {
 					if (!n) break
-					const w = words[i];
+					const ws = words[i]
+					const w = ws[ws.length - 1] == ' ' ? ws.slice(0, -1) : ws
 					const pattern = n.children.find(w => w.key == '_')
-					const x = n.children.filter(k => k.key.startsWith(w))
+					const toks = n.children.filter(k => k.key.startsWith(w))
 					if (pattern) {
-						console.warn('__')
-						prefix.push(w)
+						prefix.push(ws)
 						n = pattern
-					} else if (x.length == 1) {
-						console.warn('ex')
-						prefix.push(x[0].key)
-						n = x[0]
+					} else if (toks.length == 1) {
+						prefix.push(toks[0].token)
+						n = toks[0]
 					} else if (i + 1 == words.length) {
-						console.warn('cp')
-						const cp = commonPrefix(n.children.map(e => e.key).filter(e => e.startsWith(w)))
-						prefix.push(cp)
+						const cp = commonPrefix(n.children.map(e => e.token).filter(e => e.startsWith(w)))
+						if (cp) prefix.push(cp)
 						break
 					} else {
 						break
 					}
 				}
 
-				console.warn('i', i, 'words.length', words.length, 'n', n)
-
-				if (i == words.length || words[words.length - 1] == '' && n) {
+				if (n) {
 					// find matching suffixes
-					const suffixes = trie2list(n, prefix).map(e => e.join(' '))
-					console.warn(suffixes)
-					return cb(null, [suffixes, line])
+					const suffixes = trie2list(n, []).map(suff => {
+						const hasVar = suff.findIndex(e => isUpper(e))
+						return {
+							description: prefix.concat(suff).join(''),
+							text: prefix.concat(hasVar != -1 ? suff.slice(0, hasVar) : suff).join('')
+						}
+					})
+					return cb(null, { completions: suffixes, replace: true })
 				} else {
-					return cb(null, [[prefix.join(' ')], line])
+					return cb(null, { completions: [prefix.join('')], replace: true })
 				}
 			} catch (e) {
 				console.warn(e)
@@ -75,8 +76,8 @@ async function main(args) {
 	})
 
 	rl.on('line', async line => {
-		console.log(line)
-		console.log(await command(line))
+		const response = await command(line)
+		if (response) console.log(response)
 		rl.prompt()
 	})
 
@@ -86,31 +87,30 @@ async function main(args) {
 
 	const conn = pump(rpc, sock, rpc)
 
-	//console.warn(await list())
-	//console.warn(await command('user list', []))
 	rl.on('close', () => rpc.end())
 		
 	await conn
 }
 
 function isUpper(word) {
-	return /^[Amap(match).-Z]+$/.test(word) 
+	return /^[A-Z]+ ?$/.test(word)
 }
 
 function compl2trie(completions) {
 	const root = { children: [] }
 	completions.forEach(e => {
 		let n = root
-		e.split(/\s+/).forEach(w => {
-			const k = isUpper(n.children[w]) ? '_' : w
+		e.split(/\b/).forEach(w => {
+			const k = isUpper(w) ? '_' : w
 			if (!n.children.find(e => e.key == k)) {
-				const c = { key: k, children: [] }
+				const c = { key: k, token: w, children: [] }
 				n.children.push(c)
 				n = c
 			} else {
 				n = n.children.find(e => e.key == k)
 			}
 		})
+		n.eol = true
 	})
 
 	return root
@@ -121,8 +121,10 @@ function trie2list(n, pre) {
 
 	let out = []
 
+	if (n.eol) out.push(pre)
+
 	n.children.forEach(e => {
-		out = out.concat(trie2list(e, pre.concat(e.key)))
+		out = out.concat(trie2list(e, pre.concat(e.token)))
 	})
 
 	return out
