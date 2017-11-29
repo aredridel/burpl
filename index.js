@@ -76,8 +76,15 @@ async function main(args) {
 	})
 
 	rl.on('line', async line => {
-		const response = await command(line)
-		if (response) console.log(response)
+		line = line.trim()
+		try {
+			if (line) {
+				const response = await command(line)
+				if (response) console.log(response)
+			}
+		} catch (e) {
+			console.warn(e)
+		}
 		rl.prompt()
 	})
 

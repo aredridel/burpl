@@ -4,15 +4,17 @@ const listen = promisify(require('unix-listen'))
 const rpcs = require('multiplex-rpc')
 
 const server = createServer(async conn => {
+    const commands = [
+        "user list",
+        "user add USER",
+        "user add USER test"
+    ]
     const rpc = rpcs({
         list: callbackify(async () => {
-            return [
-                "user list",
-                "user add USER",
-                "user add USER test"
-            ]
+            return commands
         }),
         command: callbackify(async (name, args) => {
+            if (commands.indexOf(name) == -1) throw new Error(`Unknown command '${name}'`)
             console.warn(name, args)
         })
     })
