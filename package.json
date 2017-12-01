@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/aredridel/burpl.git"
   },
+  "bin": {
+    "burpl": "cli.js"
+  },
   "keywords": [
     "repl",
     "cli",
