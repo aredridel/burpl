@@ -45,9 +45,9 @@ module.exports = function match(completions, line) {
 				text: prefix.concat(hasVar != -1 ? suff.slice(0, hasVar) : suff).join('')
 			}
 		})
-		return { completions: suffixes, replace: true }
+		return { completions: suffixes }
 	} else {
-		return { completions: [prefix.join('')], replace: true }
+		return { completions: [prefix.join('')] }
 	}
 }
 

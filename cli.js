@@ -28,7 +28,7 @@ async function main(args) {
 			try {
 				const completions = await list(line)
 				const matched = match(completions, line)
-				return cb(null, matched)
+				return cb(null, { completions: matched.completions, replace: true })
 			} catch (e) {
 				console.warn(e)
 				cb(e)
