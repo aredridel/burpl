@@ -1,6 +1,7 @@
 const commonPrefix = require('common-prefix')
 
 module.exports = function match(completions, line) {
+	// This function could be broken up some, but not sure how to do so yet.
 	const trie = compl2trie(completions)
 	const words = line.split(/\b/)
 
