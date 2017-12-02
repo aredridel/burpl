@@ -1,54 +1,69 @@
-
 const commonPrefix = require('common-prefix')
 
 module.exports = function match(completions, line) {
 	const trie = compl2trie(completions)
 	const words = line.split(/\b/)
 
-	let n = trie
+	let nextNode = trie
 	const prefix = []
 
 	// for each word, if the word is unambiguous, expand it
 	// if the word is ambiguous and we're at the end, expand as much as we can, else stop
 	for (var i = 0; i < words.length; i++) {
-		if (!n) break
+		if (!nextNode) break
 		const ws = words[i]
 		const w = ws[ws.length - 1] == ' ' ? ws.slice(0, -1) : ws
-		const pattern = n.children.find(w => w.key == '_')
-		const toks = n.children.filter(k => k.key.startsWith(w))
+		const pattern = nextNode.children.find(w => w.key == '_')
+		const toks = nextNode.children.filter(k => k.key.startsWith(w))
 		if (pattern) {
-			prefix.push(ws)
-			n = pattern
+			prefix.push({ input: ws, token: pattern, variable: true })
+			nextNode = pattern
 		} else if (toks.length == 1) {
-			prefix.push(toks[0].token)
-			n = toks[0]
+			prefix.push({ input: ws, token: toks[0] })
+			nextNode = toks[0]
 		} else if (i + 1 == words.length) {
-			const cp = commonPrefix(n.children.map(e => e.token).filter(e => e.startsWith(w)))
+			const cp = commonPrefix(nextNode.children.map(e => e.token).filter(e => e.startsWith(w)))
 			if (cp) {
-				prefix.push(cp)
+				prefix.push({ input: cp, incomplete: true })
 			} else {
-				n = null
+				nextNode = null
 			}
 			break
 		} else {
-			n = null
+			nextNode = null
 			break
 		}
 	}
 
-	if (n) {
+	const command = !prefix[prefix.length - 1] || prefix[prefix.length - 1].incomplete || !prefix[prefix.length - 1].token.eol ? null : prefix.map(expandCommand).join('')
+
+	if (nextNode) {
 		// find matching suffixes
-		const suffixes = trie2list(n, []).map(suff => {
+		const suffixes = trie2list(nextNode, []).map(suff => {
 			const hasVar = suff.findIndex(e => isUpper(e))
 			return {
-				description: prefix.concat(suff).join(''),
-				text: prefix.concat(hasVar != -1 ? suff.slice(0, hasVar) : suff).join('')
+				description: prefix.map(expandInput).concat(suff).join(''),
+				text: prefix.map(expandInput).concat(hasVar != -1 ? suff.slice(0, hasVar) : suff).join('')
 			}
 		})
-		return { completions: suffixes }
+		return { completions: suffixes, command }
 	} else {
-		return { completions: [prefix.join('')] }
+		return { completions: [prefix.map(expandInput).join('')], command }
 	}
+}
+
+function expandInput(ent) {
+	if (ent.variable) {
+		return ent.input
+	} else if (ent.incomplete) {
+		return ent.input
+	} else {
+		return ent.token.token
+	}
+}
+
+function expandCommand(ent) {
+	return ent.token.token
 }
 
 function compl2trie(completions) {

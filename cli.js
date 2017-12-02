@@ -38,8 +38,13 @@ async function main(args) {
 
 	rl.on('line', async line => {
 		line = line.trim()
+		const completions = await list(line)
+		const matched = match(completions, line)
+
 		try {
-			if (line) {
+			if (!matched.command) {
+				console.warn(`No such command: ${line}`)
+			} else if (line) {
 				const response = await command(line)
 				if (response) console.log(response)
 			}
