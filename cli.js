@@ -13,7 +13,10 @@ const args = require('yargs')
 	.demandOption('s')
 	.argv
 
-main(args)
+main(args).catch(err => {
+	console.warn(err.code ? err.message : err)
+	process.exit(1)
+})
 
 async function main(args) {
 	const sock = await connect(args.socket)
