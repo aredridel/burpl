@@ -42,11 +42,13 @@ async function main(args) {
 		const matched = match(completions, line)
 
 		try {
-			if (!matched.command) {
-				console.warn(`No such command: ${line}`)
-			} else if (line) {
-				const response = await command(line)
-				if (response) console.log(response)
+			if (line) {
+				if (!matched.command) {
+					console.warn(`No such command: ${line}`)
+				} else {
+					const response = await command(matched.command, matched.args)
+					if (response) console.log(response)
+				}
 			}
 		} catch (e) {
 			console.warn(e)

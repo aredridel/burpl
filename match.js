@@ -35,7 +35,9 @@ module.exports = function match(completions, line) {
 		}
 	}
 
-	const command = !prefix[prefix.length - 1] || prefix[prefix.length - 1].incomplete || !prefix[prefix.length - 1].token.eol ? null : prefix.map(expandCommand).join('')
+	const commandComplete = !prefix[prefix.length - 1] || prefix[prefix.length - 1].incomplete || !prefix[prefix.length - 1].token.eol 
+	const command = commandComplete ? null : prefix.map(expandCommand).join('')
+	const args = commandComplete ? [] : prefix.filter(e => e.variable).map(e => e.input)
 
 	if (nextNode) {
 		// find matching suffixes
@@ -46,9 +48,9 @@ module.exports = function match(completions, line) {
 				text: prefix.map(expandInput).concat(hasVar != -1 ? suff.slice(0, hasVar) : suff).join('')
 			}
 		})
-		return { completions: suffixes, command }
+		return { completions: suffixes, command, args }
 	} else {
-		return { completions: [prefix.map(expandInput).join('')], command }
+		return { completions: [prefix.map(expandInput).join('')], command, args }
 	}
 }
 
