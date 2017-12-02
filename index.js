@@ -14,7 +14,7 @@ module.exports = function(language) {
             }),
             command: callbackify(async (name, args) => {
                 if (!language[name]) throw new Error(`Unknown command '${name}'`)
-                return language[name].apply(null, args)
+                return await language[name].apply(null, args)
             })
         })
 
