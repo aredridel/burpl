@@ -62,6 +62,7 @@ async function main(args) {
 
 	const conn = pump(rpc, sock, rpc)
 
+	sock.on('end', () => rl.close())
 	rl.on('close', () => rpc.end())
 		
 	await conn
