@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const { promisify } = require('util')
 const connect = require('net').connect
 const rpcs = require('multiplex-rpc')
