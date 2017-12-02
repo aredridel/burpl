@@ -24,9 +24,14 @@ module.exports = function match(completions, line) {
 			n = toks[0]
 		} else if (i + 1 == words.length) {
 			const cp = commonPrefix(n.children.map(e => e.token).filter(e => e.startsWith(w)))
-			if (cp) prefix.push(cp)
+			if (cp) {
+				prefix.push(cp)
+			} else {
+				n = null
+			}
 			break
 		} else {
+			n = null
 			break
 		}
 	}
