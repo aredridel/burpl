@@ -1,9 +1,10 @@
+const { tokenize } = require('@aredridel/string-tokenize')
 const commonPrefix = require('common-prefix')
 
 module.exports = function match(completions, line) {
 	// This function could be broken up some, but not sure how to do so yet.
 	const trie = compl2trie(completions)
-	const words = line.split(/\b/)
+	const words = wordsplit(line);
 
 	let nextNode = trie
 	const prefix = []
@@ -73,7 +74,7 @@ function compl2trie(completions) {
 	const root = { children: [] }
 	completions.forEach(e => {
 		let n = root
-		e.split(/\b/).forEach(w => {
+		wordsplit(e).forEach(w => {
 			const k = isUpper(w) ? '_' : w
 			if (!n.children.find(e => e.key == k)) {
 				const c = { key: k, token: w, children: [] }
@@ -107,3 +108,7 @@ function isUpper(word) {
 	return /^[A-Z]+ ?$/.test(word)
 }
 
+
+function wordsplit(line) {
+	return tokenize(line, [' ', '\t'], true, true).map(e => e.v)
+}
