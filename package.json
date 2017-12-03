@@ -41,10 +41,10 @@
   },
   "dependencies": {
     "common-prefix": "^1.1.0",
+    "minimist": "^1.2.0",
     "multiplex-rpc": "^1.0.1",
     "pump": "^1.0.3",
-    "readline-ext": "^1.2.0",
-    "yargs": "^10.0.3"
+    "readline-ext": "^1.2.0"
   },
   "devDependencies": {
     "unix-listen": "^0.1.1"
