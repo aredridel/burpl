@@ -40,7 +40,6 @@
     }
   },
   "dependencies": {
-    "@aredridel/string-tokenize": "^1.0.0",
     "common-prefix": "^1.1.0",
     "minimist": "^1.2.0",
     "multiplex-rpc": "^1.0.1",

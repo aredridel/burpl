@@ -1,4 +1,3 @@
-const { tokenize } = require('@aredridel/string-tokenize')
 const commonPrefix = require('common-prefix')
 
 module.exports = function match(completions, line) {
@@ -110,5 +109,5 @@ function isUpper(word) {
 
 
 function wordsplit(line) {
-	return tokenize(line, [' ', '\t'], true, true).map(e => e.v)
+	return line.trimRight().split(/( )/)
 }
