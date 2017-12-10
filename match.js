@@ -3,7 +3,7 @@ const commonPrefix = require('common-prefix')
 module.exports = function match(completions, line) {
 	// This function could be broken up some, but not sure how to do so yet.
 	const trie = compl2trie(completions)
-	const words = wordsplit(line);
+	const words = wordsplit(line)
 
 	let nextNode = trie
 	const prefix = []
@@ -109,5 +109,5 @@ function isUpper(word) {
 
 
 function wordsplit(line) {
-	return line.trimRight().split(/( )/)
+	return line.trimRight().split(/( )/).filter(e => !!e)
 }
