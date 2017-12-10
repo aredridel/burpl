@@ -1,6 +1,6 @@
 {
   "name": "burpl",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Control your daemons with tab-completable repls",
   "main": "index.js",
   "scripts": {
