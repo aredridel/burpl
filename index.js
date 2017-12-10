@@ -10,11 +10,21 @@ module.exports = function(language) {
 
         const rpc = rpcs({
             list: callbackify(async () => {
-                return commands
+                try {
+                    return commands
+                } catch (e) {
+                    console.warn(e)
+                    throw e
+                }
             }),
             command: callbackify(async (name, args) => {
-                if (!language[name]) throw new Error(`Unknown command '${name}'`)
-                return await language[name].apply(null, args)
+                try {
+                    if (!language[name]) throw new Error(`Unknown command '${name}'`)
+                    return await language[name].apply(null, args)
+                } catch (e) {
+                    console.warn(e)
+                    throw e
+                }
             })
         })
 
