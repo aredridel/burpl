@@ -1,4 +1,5 @@
 const commonPrefix = require('common-prefix')
+const wordsplit = require('./wordsplit')
 
 module.exports = function match(completions, line) {
 	// This function could be broken up some, but not sure how to do so yet.
@@ -105,9 +106,4 @@ function trie2list(n, pre) {
 
 function isUpper(word) {
 	return /^[A-Z]+ ?$/.test(word)
-}
-
-
-function wordsplit(line) {
-	return line.trimRight().split(/( )/).filter(e => !!e)
 }
