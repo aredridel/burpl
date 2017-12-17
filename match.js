@@ -58,7 +58,7 @@ module.exports = function match(completions, line) {
 
 function expandInput(ent) {
 	if (ent.variable) {
-		return ent.input
+		return maybeEscape(ent.input)
 	} else if (ent.incomplete) {
 		return ent.input
 	} else {
@@ -106,4 +106,12 @@ function trie2list(n, pre) {
 
 function isUpper(word) {
 	return /^[A-Z]+ ?$/.test(word)
+}
+
+function maybeEscape(x) {
+	return / /.test(x) ? escape(x) : x
+}
+
+function escape(x) {
+	return `"${x.replace(/"/, '\\"')}"`
 }
