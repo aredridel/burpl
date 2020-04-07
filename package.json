@@ -41,9 +41,9 @@
   },
   "dependencies": {
     "common-prefix": "^1.1.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "multiplex-rpc": "^1.0.1",
-    "pump": "^1.0.3",
+    "pump": "^3.0.0",
     "readline-ext": "^1.2.0"
   },
   "devDependencies": {
